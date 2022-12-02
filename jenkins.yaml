@@ -94,3 +94,6 @@
      url_password: "{{ adminpwd.stdout }}"
     with_items:  
       - terraform
+      - atlassian-bitbucket-server-integration:3.3.2
+      - bitbucket 
+      - workflow-multibranch:716.vc692a_e52371b_
