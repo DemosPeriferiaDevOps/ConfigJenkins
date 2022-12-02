@@ -1,0 +1,95 @@
+---
+- hosts: localhost
+  become: yes
+  become_method: sudo
+
+  tasks:
+  
+  - name: install jre11
+    apt:
+     name: openjdk-11-jre
+     state: present
+     update_cache: yes
+    become: true
+
+  - name: Create jenkins group
+    group:
+      name: jenkins
+      state: present
+
+  - name: Create jenkins user
+    user:
+      name: jenkins
+      group: jenkins
+      state: present
+
+  - name: ensure the jenkins apt repository key is installed
+    apt_key: url=https://pkg.jenkins.io/debian-stable/jenkins.io.key state=present
+    become: yes
+
+  - name: ensure the repository is configured
+    apt_repository: repo='deb https://pkg.jenkins.io/debian-stable binary/' state=present
+    become: yes
+
+  - name: Install Jenkins
+    apt: 
+      name: jenkins
+      update_cache: yes
+      install_recommends: no
+
+  - name: Jenkins Skip startUp for MI
+    lineinfile:
+      dest=/lib/systemd/system/jenkins.service
+      regexp='Environment="JAVA_OPTS=-Djava.awt.headless=true'
+      line='Environment="JAVA_OPTS=-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+    register: result_skip_startup_wizard
+
+  - name: Start and Enable Jenkins
+    systemd:
+      name: jenkins
+      state: started
+      enabled: true
+
+  # - name: Sleep for 30 seconds and continue with Jenkins buildout
+  #   wait_for: timeout=30
+
+  - name: read admin pwd
+    shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+    register: adminpwd
+
+  - name: unlock and add admin user
+    jenkins_script:
+     script: |
+      import jenkins.model.*
+      import hudson.security.*
+      def instance = Jenkins.getInstance()
+      def hudsonRealm = new HudsonPrivateSecurityRealm(false)
+      hudsonRealm.createAccount('jenkins', '${user_pwd}')
+      instance.setSecurityRealm(hudsonRealm)
+      def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
+      strategy.setAllowAnonymousRead(false)
+      instance.setAuthorizationStrategy(strategy)
+      instance.save()
+     args:
+      user_pwd: "admin"
+     user: admin
+     password: "{{ adminpwd.stdout }}"
+
+  - name: complete setup wizard
+    jenkins_script:
+     script: |
+      import static jenkins.model.Jenkins.instance as jenkins
+      import jenkins.install.InstallState
+      if (!jenkins.installState.isSetupComplete()) {
+        InstallState.INITIAL_SETUP_COMPLETED.initializeState()
+      }
+     user: admin
+     password: "{{ adminpwd.stdout }}"
+
+  - name: install plugin
+    jenkins_plugin:
+     name: "terraform"
+     state: latest
+     url_username: admin
+     url_password: "{{ adminpwd.stdout }}"
+    with_items: "terraform:1.0.10"
