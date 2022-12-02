@@ -95,5 +95,5 @@
     with_items:  
       - terraform:1.0.10
       - atlassian-bitbucket-server-integration:3.3.2
-      - multibranch-scan-webhook-trigger:1.0.9
-      - jira:3.8
+      - multibranch-scan-webhook-trigger
+      - jira
