@@ -94,4 +94,3 @@
      url_password: "{{ adminpwd.stdout }}"
     with_items:  
       - terraform
-    notify: restart jenkins
