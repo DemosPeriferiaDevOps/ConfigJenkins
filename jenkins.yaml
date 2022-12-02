@@ -93,8 +93,7 @@
      url_username: admin
      url_password: "{{ adminpwd.stdout }}"
     with_items:  
-      - terraform
+      - terraform:1.0.10
       - atlassian-bitbucket-server-integration:3.3.2
-      - bitbucket 
-      - workflow-multibranch:716.vc692a_e52371b_
+      - multibranch-scan-webhook-trigger:1.0.9
       - jira:3.8
