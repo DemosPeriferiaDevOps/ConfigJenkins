@@ -88,8 +88,10 @@
 
   - name: install plugin
     jenkins_plugin:
-     name: "terraform"
+     name: "{{ item }}"
      state: latest
      url_username: admin
      url_password: "{{ adminpwd.stdout }}"
-    with_items: "terraform:1.0.10"
+    with_items:  
+      - terraform
+    notify: restart jenkins
