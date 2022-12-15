@@ -93,7 +93,30 @@
      url_username: admin
      url_password: "{{ adminpwd.stdout }}"
     with_items:  
-      - terraform:1.0.10
-      - atlassian-bitbucket-server-integration:3.3.2
+      - ansicolor
+      - ant
+      - cloudbees-bitbucket-branch-source
+      - bitbucket-build-status-notifier
+      - bitbucket
+      - atlassian-bitbucket-server-integration
+      - build-timeout
+      - command-launcher
+      - emailext-template
+      - generic-webhook-trigger
+      - github-branch-source
+      - gradle
+      - javax-mail-api
+      - jersey2-api
+      - ldap
+      - matrix-auth
       - multibranch-scan-webhook-trigger
-      - jira
+      - jdk-tool
+      - pam-auth
+      - workflow-aggregator
+      - pipeline-github-lib
+      - pipeline-stage-view
+      - ssh-slaves
+      - sshd
+      - terraform
+      - timestamper
+      - ws-cleanup
