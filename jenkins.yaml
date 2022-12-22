@@ -121,3 +121,8 @@
       - timestamper
       - ws-cleanup
 
+  - name: Restart Jenkins
+    systemd:
+      name: jenkins
+      state: restart
+      enabled: true
