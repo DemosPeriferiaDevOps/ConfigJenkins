@@ -124,5 +124,5 @@
   - name: Restart Jenkins
     systemd:
       name: jenkins
-      state: restart
+      state: restarted
       enabled: true
