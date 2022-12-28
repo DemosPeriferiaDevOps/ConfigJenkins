@@ -120,6 +120,7 @@
       - terraform
       - timestamper
       - ws-cleanup
+      - keycloak
 
   - name: Restart Jenkins
     systemd:
